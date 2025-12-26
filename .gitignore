@@ -1,0 +1,10 @@
+# Ignore dataset
+chest_xray/
+
+# Ignore trained models
+model/
+
+# Ignore virtual environment
+venv/
+__pycache__/
+*.pyc
