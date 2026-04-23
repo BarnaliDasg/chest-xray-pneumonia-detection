@@ -6,7 +6,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 
 # Load the model
-model = load_model("model/pneumonia_detection_model.h5")
+model = load_model("../model/pneumonia_detection_model.h5")
 
 # Function to make prediction
 def predict_image(img_path):

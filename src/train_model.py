@@ -9,10 +9,12 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
+
 
 # Directories
-train_dir = "chest_xray/train"
-test_dir = "chest_xray/test"
+train_dir = "../chest_xray/train"
+test_dir = "../chest_xray/test"
 
 # Data augmentation for training
 train_datagen = ImageDataGenerator(
@@ -74,10 +76,15 @@ model.compile(optimizer=Adam(learning_rate=0.0001),
 history = model.fit(
     train_generator,
     validation_data=val_generator,
-    epochs=5
+    epochs=28
 )
-model.save("pneumonia_detection_model.h5")
-print("Model saved as pneumonia_detection_model.h5")
+model.save("../model/pneumonia_detection_model.h5")
+print("Model saved as model/pneumonia_detection_model.h5")
+early_stop = EarlyStopping(
+    monitor='val_loss',
+    patience=5,
+    restore_best_weights=True
+)
 
 # Evaluate
 loss, accuracy = model.evaluate(test_generator)
