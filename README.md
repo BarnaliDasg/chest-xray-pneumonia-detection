@@ -1,96 +1,107 @@
-🫁 Chest X-Ray Pneumonia Detection
+# 🫁 Chest X-Ray Pneumonia Detection
 
-A deep learning-based web application that detects pneumonia from chest X-ray images using computer vision and neural networks.
+A deep learning-based web application for detecting **pneumonia from chest X-ray images** using computer vision and transfer learning.
 
-🚀 Overview
 
-Pneumonia is a serious lung infection that requires early and accurate diagnosis. This project leverages Deep Learning + Medical Imaging to automatically classify chest X-ray images as:
+## 🚀 Overview
 
-✅ Normal
-⚠️ Pneumonia
+Pneumonia is a potentially life-threatening lung infection that requires timely diagnosis. This project aims to assist in early detection by automatically classifying chest X-ray images into:
 
-The system integrates:
+- **Normal**
+- **Pneumonia**
 
-A trained deep learning model
-A prediction pipeline
-A web interface for real-time usage
-🧠 Model & Approach
-Built using Python, TensorFlow/Keras
-Transfer Learning with MobileNetV2
-Image preprocessing using OpenCV
-Binary classification (Normal vs Pneumonia)
-🔍 Workflow
-Load and preprocess X-ray images
-Train CNN model using labeled dataset
-Evaluate performance on test data
-Deploy prediction pipeline
-Integrate with web interface (PHP)
-📊 Dataset
+The system combines a trained deep learning model with a simple web interface to enable real-time predictions.
+
+
+## 🧠 Model & Methodology
+
+- Transfer Learning using **MobileNetV2**
+- Built with **TensorFlow / Keras**
+- Image preprocessing using **OpenCV**
+- Binary classification (Normal vs Pneumonia)
+
+### Workflow:
+1. Image preprocessing and normalization  
+2. Model training on labeled dataset  
+3. Performance evaluation  
+4. Prediction on new images  
+5. Integration with web interface  
+
+
+## 📊 Dataset
 
 This project uses the publicly available dataset:
 
-👉 Chest X-Ray Pneumonia Dataset
+👉 https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 
-📌 Dataset Details:
-~5,800+ chest X-ray images
-Two classes:
-Normal
-Pneumonia
-Organized into:
-train/
-test/
-val/
-Images sourced from pediatric patients (1–5 years old)
-🛠️ Tech Stack
-Frontend: HTML, CSS, PHP
-Backend: Python
-ML Framework: TensorFlow / Keras
-Libraries: OpenCV, NumPy, Matplotlib
-Version Control: Git & GitHub
-📂 Project Structure
-chest-xray-pneumonia-detection/
+### Dataset Details:
+- ~5,800+ chest X-ray images  
+- Two classes: Normal and Pneumonia  
+- Structured into train, test, and validation sets  
+
+
+## 🛠️ Tech Stack
+
+- **Frontend:** HTML, CSS, PHP  
+- **Backend:** Python  
+- **ML Framework:** TensorFlow / Keras  
+- **Libraries:** OpenCV, NumPy, Matplotlib  
+- **Server:** XAMPP  
+- **Version Control:** Git & GitHub  
+
+
+## 📂 Project Structure
+```chest-xray-pneumonia-detection/
 │
-├── src/
-│   ├── train_model.py
-│   ├── predict_single.py
-│   ├── predict_logic.py
+├── 📁 src/
+│ ├── train_model.py
+│ ├── predict_single.py
+│ └── predict_logic.py
 │
-├── uploads/              # User uploaded images (ignored in git)
-├── index.php             # Web interface
-├── generate_report.php   # Report generation
-├── fpdf.php              # PDF handling
-├── .gitignore
-└── README.md
-⚙️ Installation & Setup
-🔹 1. Clone the repository
+├── 📁 uploads/ (ignored)
+│
+├── 🌐 index.php
+├── 📄 generate_report.php
+├── 📄 fpdf.php
+│
+├── ⚙️ .gitignore
+└── 📘 README.md
+```
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repository
 git clone https://github.com/BarnaliDasg/chest-xray-pneumonia-detection.git
+
 cd chest-xray-pneumonia-detection
-🔹 2. Install dependencies
+### 2. Install dependencies
 pip install -r requirements.txt
-🔹 3. Run training (optional)
+### 3. Train the model (optional)
 python src/train_model.py
-🔹 4. Run prediction
+### 4. Run prediction
 python src/predict_single.py
-🔹 5. Run web app
-Place project inside xampp/htdocs
-Start Apache server
-Open:
+### 5. Run the web application
+Move project to xampp/htdocs
+Start Apache from XAMPP
+Open in browser:
 http://localhost/pneumonia_detection/
-📸 Features
-Upload chest X-ray image
+
+## ✨ Features
+Upload chest X-ray images
 Predict pneumonia instantly
-Generate PDF report
-Visualize model performance
-📈 Results
-Achieved high accuracy using transfer learning
-Improved performance with data preprocessing
-Handles real-world X-ray variations
-⚠️ Disclaimer
+Generate downloadable PDF reports
+Simple and user-friendly interface
 
-This project is for educational and research purposes only.
-It is not a substitute for professional medical diagnosis.
+## 📈 Results
 
-🙌 Acknowledgements
-Dataset by Kaggle contributors
-Research inspiration from deep learning in medical imaging
-Based on real-world clinical X-ray data
+- **Test Accuracy: ~94.2%**
+- The model achieves strong performance using transfer learning and preprocessing techniques, making it effective for basic pneumonia detection tasks.
+
+## ⚠️ Disclaimer
+
+This project is intended for educational purposes only and should not be used for medical diagnosis.
+
+## 🙌 Acknowledgements
+Kaggle dataset contributors
+Open-source deep learning community
+
