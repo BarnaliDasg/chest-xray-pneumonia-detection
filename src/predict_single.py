@@ -1,86 +1,77 @@
-import tkinter as tk
-from tkinter import filedialog
-from PIL import Image, ImageTk
+import os
+import sys
+import json
+import logging
 import cv2
 import numpy as np
+
+# 🔇 Silence TensorFlow logs BEFORE importing it
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+logging.getLogger('absl').setLevel(logging.ERROR)
+
 from tensorflow.keras.models import load_model
+from gradcam import get_img_array, make_gradcam_heatmap, overlay_heatmap
 
-# Load the model
-model = load_model("../model/pneumonia_detection_model.h5")
+# Model path
+MODEL_PATH = r"C:\xampp\htdocs\pneumonia_detection\model\pneumonia_detection_model.h5"
 
-# Function to make prediction
+# ✅ Load model WITHOUT compile (removes warning)
+model = load_model(MODEL_PATH, compile=False)
+
+
 def predict_image(img_path):
+    if not os.path.exists(img_path):
+        return {"error": "Image not found"}
+
     img = cv2.imread(img_path)
+    if img is None:
+        return {"error": "Invalid image file"}
+
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    # Model input
     x = cv2.resize(img_rgb, (150, 150))
     x = np.expand_dims(x, axis=0) / 255.0
-    prediction = model.predict(x)[0][0]
+
+    # Prediction
+    prediction = float(model.predict(x, verbose=0)[0][0])
     label = "PNEUMONIA" if prediction > 0.5 else "NORMAL"
-    return img_rgb, label, prediction
 
-# Function to upload image and show result
-def upload_image():
-    # Open file dialog for image selection
-    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
-    
-    # Check if user canceled
-    if not file_path:
-        tk.messagebox.showwarning("No file selected", "Please select an image to proceed.")
-        return
+    # 🔥 Grad-CAM
+    img_array = get_img_array(img_path, size=(150, 150))
 
-    # Check for valid image extension
-    valid_extensions = (".jpg", ".jpeg", ".png")
-    if not file_path.lower().endswith(valid_extensions):
-        tk.messagebox.showerror("Invalid file", "Please select a valid image file (jpg, jpeg, png).")
-        return
-
-    # Try to load and process the image
-    try:
-        img, label, prob = predict_image(file_path)
-    except Exception as e:
-        tk.messagebox.showerror("Error", f"Cannot process this image.\nDetails: {e}")
-        return
-
-    # Resize image for display
-    max_width = 400
-    scale = max_width / img.shape[1]
-    new_height = int(img.shape[0] * scale)
-    img_resized = cv2.resize(img, (max_width, new_height))
-
-    # Convert to ImageTk format
-    img_pil = Image.fromarray(img_resized)
-    img_tk = ImageTk.PhotoImage(img_pil)
-
-    # Update image panel
-    panel.config(image=img_tk)
-    panel.image = img_tk
-
-    # Update prediction label
-    result_label.config(
-        text=f"Prediction: {label} ({prob*100:.1f}%)",
-        fg="green" if label == "NORMAL" else "red"
+    heatmap = make_gradcam_heatmap(
+        img_array,
+        model,
+        last_conv_layer_name="Conv_1"  # change if needed
     )
 
-# Create main window
-root = tk.Tk()
-root.title("Pneumonia Detector")
-root.geometry("500x600")
-root.config(bg="black")
+    cam_image = overlay_heatmap(img_path, heatmap)
 
-# Header
-header = tk.Label(root, text="Pneumonia Detector", font=("Arial", 20, "bold"), bg="#8b4513", fg="white")
-header.pack(pady=10)
+    filename = os.path.basename(img_path)
+    cam_path = f"uploads/gradcam_{filename}"
 
-# Image panel
-panel = tk.Label(root, bg="white", bd=2, relief="sunken")
-panel.pack(padx=10, pady=10)
+    cv2.imwrite(cam_path, cam_image)
 
-# Result label
-result_label = tk.Label(root, text="", font=("Arial", 16), bg="#f0f0f0")
-result_label.pack(pady=10)
+    return {
+        "label": label,
+        "confidence": float(round(prediction * 100, 2)),
+        "gradcam": cam_path
+    }
 
-# Upload button
-btn = tk.Button(root, text="Upload Image", command=upload_image, font=("Arial", 14), bg="#bc8f8f", fg="white")
-btn.pack(pady=10)
 
-root.mainloop()
+# 🔥 Entry point for PHP
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        sys.stdout.write(json.dumps({"error": "No input image"}))
+        sys.exit(1)
+
+    img_path = sys.argv[1]
+
+    try:
+        result = predict_image(img_path)
+        sys.stdout.write(json.dumps(result))
+        sys.stdout.flush()
+    except Exception as e:
+        sys.stdout.write(json.dumps({"error": str(e)}))
+        sys.stdout.flush()
