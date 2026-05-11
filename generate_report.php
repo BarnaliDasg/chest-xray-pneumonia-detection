@@ -15,6 +15,7 @@ if(isset($_GET['id'])){
     $data = $res->fetch_assoc();
 
     $pdf = new FPDF();
+    $pdf->SetAutoPageBreak(false);
     $pdf->AddPage();
 
     // =========================
@@ -29,7 +30,7 @@ if(isset($_GET['id'])){
     $pdf->SetFont('Arial','',11);
     $pdf->Cell(0,6,'Patient: '.$data['patient_name'],0,1);
     $pdf->Cell(0,6,'Date: '.$data['created_at'],0,1);
-    $pdf->Ln(3);
+    $pdf->Ln(1);
 
     // =========================
     // RESULT
@@ -47,7 +48,7 @@ if(isset($_GET['id'])){
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',11);
     $pdf->Cell(0,6,'Confidence: '.number_format($data['confidence'],2).'%',0,1);
-    $pdf->Ln(5);
+    $pdf->Ln(2);
 
     // =========================
     // IMAGE PATHS
@@ -64,7 +65,7 @@ if(isset($_GET['id'])){
     $startY = $pdf->GetY();
 
     $imgWidth = 85;   // each image width
-    $gap = 10;
+    $gap = 5;
 
     // LEFT: Original
     if(file_exists($imagePath)){
@@ -123,18 +124,27 @@ if(isset($_GET['id'])){
 
     $pdf->MultiCell(
         0,
-        6,
+        5,
         "The Grad-CAM heatmap highlights areas of the chest X-ray that influenced the AI model during prediction. Warmer colors indicate stronger model attention toward potential pneumonia-related patterns."
     );
 
     // =========================
     // FOOTER
     // =========================
-    $pdf->SetY(-15);
-    $pdf->SetFont('Arial','I',8);
-    $pdf->SetTextColor(120,120,120);
-    $pdf->Cell(0,10,'AI-generated report. Not a substitute for medical advice.',0,0,'C');
+    $pdf->SetY(-12);
 
+    $pdf->SetFont('Arial','I',8);
+
+    $pdf->SetTextColor(120,120,120);
+
+    $pdf->Cell(
+        0,
+        10,
+        'AI-generated report. Not a substitute for medical advice.',
+        0,
+        0,
+        'C'
+    );
     // =========================
     // OUTPUT
     // =========================
